@@ -1,4 +1,4 @@
-package Class;
+package model;
 
 import android.content.ContentValues;
 import android.content.Context;

@@ -14,19 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
-
         <activity
-            android:name=".LayoutDangKy"
+            android:name=".LayoutTrangChu"
             android:exported="false" />
         <activity
-            android:name=".LayoutCongViec"
+            android:name=".LayoutDangKy"
             android:exported="false" />
         <activity
             android:name=".LayoutChiTietGhiChu"
             android:exported="false"
             android:theme="@style/Theme.MyApplication" />
         <activity
-            android:name=".LayoutTrangChu"
+            android:name=".LayoutGhiChu"
             android:exported="false" /> <!-- <activity -->
         <!-- android:name=".LayoutDangNhap" -->
         <!-- android:exported="false" /> -->

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/im_account"
+        android:title="Tài khoản"
+        android:icon="@drawable/ic_account"
+        />
+    <item
+        android:id="@+id/im_share"
+        android:icon="@drawable/ic_share"
+        android:title="Giới thiệu bạn bè" />
+    <item
+        android:id="@+id/im_notification"
+        android:icon="@drawable/ic_notification"
+        android:title="Chế độ thông báo"
+        />
+    <item
+        android:id="@+id/im_aboutMe"
+        android:icon="@drawable/ic_information"
+        android:title="Về chúng tôi"
+        />
+    <item
+        android:id="@+id/im_reviewApp"
+        android:icon="@drawable/ic_star"
+        android:title="Đánh giá ứng dụng"
+        />
+    <item
+        android:id="@+id/im_privacy"
+        android:icon="@drawable/ic_privacy"
+        android:title="Chính sách bảo mật"
+        />
+    <item
+        android:id="@+id/im_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Đăng xuất"
+        />
+    <item
+        android:id="@+id/im_delete"
+        android:icon="@drawable/ic_delete"
+        android:title="Chế độ thông báo"
+        />
+</menu>

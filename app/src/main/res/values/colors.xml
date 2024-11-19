@@ -6,5 +6,6 @@
     <color name="primary">#FC8B8A</color>
     <color name="start">#FEC773</color>
     <color name="end">#F38181</color>
+    <color name="transparent">#00000000</color>
 
 </resources>

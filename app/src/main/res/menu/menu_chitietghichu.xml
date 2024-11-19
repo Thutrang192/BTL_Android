@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_look"
+        android:icon="@drawable/ic_look"
+        android:title="look"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/ic_share"
+        android:icon="@drawable/ic_share"
+        android:title="share"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/ic_theme"
+        android:icon="@drawable/ic_theme"
+        android:title="theme"
+        app:showAsAction="always" />
+</menu>

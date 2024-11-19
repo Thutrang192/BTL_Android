@@ -15,7 +15,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
-import androidx.core.graphics.PathParser;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -102,7 +101,7 @@ public class LayoutDangNhap extends AppCompatActivity {
         tvDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(LayoutDangNhap.this, LayoutDangKy.class);
+                Intent intent1 = new Intent(LayoutDangNhap.this, LayoutDangNhap.class);
                 startActivity(intent1);
 
             }
@@ -130,7 +129,7 @@ public class LayoutDangNhap extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(LayoutDangNhap.this, "Dang nhap thanh cong", Toast.LENGTH_LONG).show();
-                            Intent intent1 = new Intent(LayoutDangNhap.this, LayoutTrangChu.class);
+                            Intent intent1 = new Intent(LayoutDangNhap.this, LayoutGhiChu.class);
                             startActivity(intent1);
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());

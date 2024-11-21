@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LayoutChiTietGhiChu"
-    android:background="@drawable/bg_ctghichu">
-
-    <TextView
-        android:id="@+id/tvGhiChu"
-        android:layout_width="153dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="218dp"
-        android:text="Ghi chú"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:background="@color/orange"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarCTGC"
+        android:id="@+id/toolbar_CTGC"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -34,56 +21,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="412dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvGhiChu">
-
-        <TextView
-            android:id="@+id/tvNgay"
-            android:layout_width="131dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="40dp"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/tvGio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="30dp">
+        <EditText
+            android:id="@+id/edt_title"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:text="TextView"
-            tools:layout_editor_absoluteX="139dp"
-            tools:layout_editor_absoluteY="134dp" />
+            android:layout_height="wrap_content"
+            android:hint="Tiêu đề"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:background="@android:color/transparent"
+            />
 
-        <TextView
-            android:id="@+id/tvKyTu"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:text="TextView"
-            tools:layout_editor_absoluteX="207dp"
-            tools:layout_editor_absoluteY="134dp" />
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3:49 CH, 19/11/2024" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edt_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:hint="Nội dung"
+            android:textSize="26sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:background="@android:color/transparent" />
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="325dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="40dp"
-        android:layout_weight="1"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

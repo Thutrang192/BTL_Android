@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,21 +19,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+
 public class FragmentNote extends Fragment {
 
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private FirebaseStorage storage;
+
+    private RecyclerView rvNotes;
+    private FloatingActionButton btnAdd;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_note, container, false);
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
+
 
         // gan Toolbar lam ActionBar
         if (requireActivity() instanceof AppCompatActivity) {
@@ -69,5 +82,11 @@ public class FragmentNote extends Fragment {
                 }
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
     }
+
+
+
+
+
 }

@@ -32,6 +32,7 @@ public class LayoutDangNhap extends AppCompatActivity {
     private ImageView ivEye;
     private Button btnDangNhap;
     private TextView tvDangKy;
+
     // bien luu trang thai hien thi mat khau
     private boolean eye = false;
     private static final String TAG = "LayoutDangNhap";

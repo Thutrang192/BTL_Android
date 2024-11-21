@@ -5,7 +5,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#FC8B8A</color>
     <color name="start">#FEC773</color>
-    <color name="end">#F38181</color>
-    <color name="transparent">#00000000</color>
+    <color name="end">#D9A0BB</color>
+    <color name="red">#F2A7AD</color>
+    <color name="pink">#F2C2D2</color>
+    <color name="green">#9EBF99</color>
+    <color name="blue">#B2D9EA</color>
+    <color name="orange">#F2B9AC</color>
+    <color name="violet">#BEB6F2</color>
+
 
 </resources>

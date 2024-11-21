@@ -33,8 +33,7 @@
             android:name=".LayoutChiTietGhiChu"
             android:exported="false"
             android:theme="@style/Theme.MyApplication" /> <!-- <activity -->
-        <!-- android:name=".LayoutDangNhap" -->
-        <!-- android:exported="false" /> -->
+
         <activity
             android:name=".Splash"
             android:exported="true">

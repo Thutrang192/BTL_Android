@@ -24,6 +24,23 @@ public class Note implements Serializable {
         this.idUser = idUser;
     }
 
+    public Note(String id, String title, String content, String date, String theme) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.theme = theme;
+    }
+
+    public Note(String id, String title, String content, String date, String theme, String idUser) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.theme = theme;
+        this.idUser = idUser;
+    }
+
     public Note(String title, String content, String date) {
         this.title = title;
         this.content = content;

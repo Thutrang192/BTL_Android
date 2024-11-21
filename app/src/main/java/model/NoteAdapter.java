@@ -3,6 +3,7 @@ package model;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.LayoutChiTietGhiChu;
@@ -47,11 +49,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         String title = note.getTitle();
         String content = note.getContent();
         String date = note.getDate();
+        String theme = note.getTheme();
         Context context = holder.itemView.getContext();
 
         holder.tvTitle.setText(title);
         holder.tvContent.setText(content);
         holder.tvDate.setText(date);
+        holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
 
         holder.ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +78,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 }
             }
         });
-
+        
         holder.layout_item_note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +95,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public class ViewHolder extends  RecyclerView.ViewHolder {
         TextView tvTitle, tvDate, tvContent;
         ImageView ivDelete;
-        LinearLayout layout_item_note;
+        CardView layout_item_note;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

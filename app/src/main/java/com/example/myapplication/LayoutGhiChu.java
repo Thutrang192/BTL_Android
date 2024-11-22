@@ -2,13 +2,16 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -58,12 +61,49 @@ public class LayoutGhiChu extends AppCompatActivity {
     private List<Note> lstNote;
     private NoteAdapter noteAdapter;
     private FloatingActionButton btnAdd;
+    private ArrayAdapter<String> arrayAdapter;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_ghichu, menu);
         inflater.inflate(R.menu.menu_overflow, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Search");
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                noteAdapter.filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                noteAdapter.filter(newText);
+                return false;
+            }
+        });
+
+        // lang nghe su kien thay doi focus, tu dong SearchView khi click ra ngoai
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    searchView.clearFocus();
+                    searchView.setIconified(true);
+
+                    // hien thi lai danh sach origin
+                    noteAdapter.filter("");
+                } else {
+
+                }
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -111,6 +151,7 @@ public class LayoutGhiChu extends AppCompatActivity {
         myRef = database.getReference("notes");
 
         rvNotes = findViewById(R.id.rv_note);
+
         btnAdd = findViewById(R.id.btn_add);
 
         rvNotes.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
@@ -153,13 +194,16 @@ public class LayoutGhiChu extends AppCompatActivity {
                     lstNote.add(note);
                 }
 
+                // cap nhat danh sach goc
+                noteAdapter.updateListSearch(new ArrayList<>(lstNote));
+
                 // cap nhat RecyclerView
                 noteAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DEBUG", "Failes to read value from realtime", error.toException());
+                Log.d("DEBUG", "Failes to read data from realtime", error.toException());
             }
         });
     }
@@ -208,6 +252,8 @@ public class LayoutGhiChu extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // xoa item note ra khoi danh sach
                             lstNote.remove(position);
+                            //originNote.remove(position);
+
                             // cap nhat RecyclerView
                             noteAdapter.notifyItemRemoved(position);
                             Toast.makeText(LayoutGhiChu.this, "Xoa ghi chu thanh cong", Toast.LENGTH_LONG).show();
@@ -228,7 +274,7 @@ public class LayoutGhiChu extends AppCompatActivity {
         Intent intent = new Intent(this, LayoutChiTietGhiChu.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("ItemNote", note);
-        intent.putExtras(bundle);
+         intent.putExtras(bundle);
         startActivity(intent);
     }
 }

@@ -222,7 +222,6 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         Toast.makeText(LayoutChiTietGhiChu.this, "Sua ghi chu thanh cong", Toast.LENGTH_LONG).show();
-
                     } else {
                         Log.d("DEBUG", "Sua ghi chu that bai", task.getException());
                     }
@@ -244,6 +243,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                 });
             }
         }
+
         layout_ctghc.setBackgroundColor(Color.parseColor(theme));
     }
 

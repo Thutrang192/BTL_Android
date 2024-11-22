@@ -21,6 +21,9 @@ import com.example.myapplication.LayoutCongViec;
 import com.example.myapplication.LayoutGhiChu;
 import com.example.myapplication.R;
 
+import org.checkerframework.checker.units.qual.N;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import Interface.iClickItemNote;
@@ -28,10 +31,12 @@ import Interface.iClickItemNote;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     private List<Note> lstNote;
+    private List<Note> originList;
     private iClickItemNote iClickItemNote;
 
     public NoteAdapter(List<Note> lst, iClickItemNote listener) {
-        this.lstNote = lst;
+        this.lstNote = lst; // danh sach loc
+        this.originList = lst; // danh sach goc
         this.iClickItemNote = listener;
     }
 
@@ -70,7 +75,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                 Note deletNote = lstNote.get(currentPosition);
                                 String noteID = deletNote.getId();
 
+                                // xoa ghi chu tu firebase
                                 iClickItemNote.deleteData(noteID);
+
+                                // xoa ghi chu ra khoi lstNote va originList
+                                lstNote.remove(currentPosition);
+                                //originList.remove(currentPosition);
+
+                                // cap nhat giao dien
+                                notifyItemRemoved(currentPosition);
 
                             }))
                             .setNegativeButton("Hủy", null)
@@ -92,6 +105,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         return lstNote.size();
     }
 
+
+
     public class ViewHolder extends  RecyclerView.ViewHolder {
         TextView tvTitle, tvDate, tvContent;
         ImageView ivDelete;
@@ -106,6 +121,29 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             ivDelete = itemView.findViewById(R.id.iv_delete);
             layout_item_note = itemView.findViewById(R.id.layout_item_note);
         }
+    }
+
+    public void filter(String query) {
+        if (query.isEmpty()) {
+            // hien thi toan bo danh sach neu khong co tu khoa
+            lstNote = originList;
+        } else {
+            List<Note> lstSearch = new ArrayList<>();
+            for (Note note : originList) {
+                if (note.getTitle().toLowerCase().contains(query.toLowerCase())
+                || note.getContent().toLowerCase().contains(query.toLowerCase())) {
+                    lstSearch.add(note);
+                }
+            }
+            lstNote = lstSearch;
+        }
+
+        // cap nhat giao dien
+        notifyDataSetChanged();
+    }
+
+    public void updateListSearch(ArrayList<Note> notes) {
+        this.originList = notes;
     }
 
 

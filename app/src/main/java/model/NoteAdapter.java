@@ -55,42 +55,51 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         String content = note.getContent();
         String date = note.getDate();
         String theme = note.getTheme();
+        String pass = note.getPassword();
         Context context = holder.itemView.getContext();
 
-        holder.tvTitle.setText(title);
-        holder.tvContent.setText(content);
-        holder.tvDate.setText(date);
-        holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
+        if (pass == null || pass.isEmpty()) {
 
-        holder.ivDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // lay vi tri hien tai cua item note
-                int currentPosition = holder.getAdapterPosition();
-                if (currentPosition != RecyclerView.NO_POSITION) {
-                    new AlertDialog.Builder(context)
-                            .setTitle("Xóa ghi chú")
-                            .setMessage("Bạn có chắc chắn muốn xóa ghi chú này?")
-                            .setPositiveButton("Xóa", ((dialog, which) -> {
-                                Note deletNote = lstNote.get(currentPosition);
-                                String noteID = deletNote.getId();
+            holder.tvTitle.setText(title);
+            holder.tvContent.setText(content);
+            holder.tvDate.setText(date);
+            holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
 
-                                // xoa ghi chu tu firebase
-                                iClickItemNote.deleteData(noteID);
+            holder.ivDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // lay vi tri hien tai cua item note
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        new AlertDialog.Builder(context)
+                                .setTitle("Xóa ghi chú")
+                                .setMessage("Bạn có chắc chắn muốn xóa ghi chú này?")
+                                .setPositiveButton("Xóa", ((dialog, which) -> {
+                                    Note deletNote = lstNote.get(currentPosition);
+                                    String noteID = deletNote.getId();
 
-                                // xoa ghi chu ra khoi lstNote va originList
-                                lstNote.remove(currentPosition);
-                                //originList.remove(currentPosition);
+                                    // xoa ghi chu tu firebase
+                                    iClickItemNote.deleteData(noteID);
 
-                                // cap nhat giao dien
-                                notifyItemRemoved(currentPosition);
+                                    // xoa ghi chu ra khoi lstNote va originList
+                                    lstNote.remove(currentPosition);
+                                    //originList.remove(currentPosition);
 
-                            }))
-                            .setNegativeButton("Hủy", null)
-                            .show();
+                                    // cap nhat giao dien
+                                    notifyItemRemoved(currentPosition);
+
+                                }))
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            holder.tvTitle.setText(title);
+            holder.tvContent.setText("");
+            holder.tvDate.setText(date);
+            holder.layout_item_note.setCardBackgroundColor(Color.parseColor("#727070"));
+        }
         
         holder.layout_item_note.setOnClickListener(new View.OnClickListener() {
             @Override

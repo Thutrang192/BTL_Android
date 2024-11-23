@@ -68,7 +68,7 @@ public class FragmentNote extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.ic_look) {
+                if (menuItem.getItemId() == R.id.ic_lock) {
                     // Xử lý lưu ghi chú
                     return true;
                 } else if (menuItem.getItemId() == R.id.ic_share) {

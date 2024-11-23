@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -8,6 +10,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,6 +66,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
     private List<Note> lstNote;
 
     private String noteID;
+    private String passwordNote = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,6 +155,52 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
             onBackPressed();
         }
 
+        if (item.getItemId() == R.id.ic_lock) {
+            Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.layout_dialog_pass);
+
+            Window window = dialog.getWindow();
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            Button btn_huy = dialog.findViewById(R.id.btn_huy);
+            Button btn_luu = dialog.findViewById(R.id.brn_luu);
+            EditText edtPass = dialog.findViewById(R.id.edt_passNote);
+
+            btn_huy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            btn_luu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    passwordNote = edtPass.getText().toString();
+
+                    if (passwordNote.isEmpty()) {
+                        Toast.makeText(LayoutChiTietGhiChu.this, "Vui lòng nhập mật khẩu!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        dialog.dismiss();
+                       // Toast.makeText(LayoutChiTietGhiChu.this, "Mật khẩu đã được lưu!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            dialog.show();
+        }
+
+        if (item.getItemId() == R.id.ic_share) {
+            String content = edtContent.getText().toString();
+            if (!content.isEmpty()) {
+                shareNote(content);
+            } else {
+                Toast.makeText(LayoutChiTietGhiChu.this, "Ghi chú trống", Toast.LENGTH_LONG).show();
+            }
+        }
+
         if (item.getItemId() == R.id.ic_theme) {
             // tao bottomsheetdialog
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(LayoutChiTietGhiChu.this);
@@ -203,6 +255,13 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void shareNote(String content) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, content);
+        startActivity(Intent.createChooser(share, "Chia sẻ ghi chú qua "));
+    }
+
     private void theme(String selectedColor) {
         ColorDrawable colorDrawable = (ColorDrawable) layout_ctghc.getBackground();
         colorDrawable.setColor(Color.parseColor(selectedColor));
@@ -216,7 +275,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         String theme = String.format("#%06X", (0xFFFFFF & colorDrawable.getColor())); // Lấy mã màu HEX
 
         if (getDataFromItemNote()) {
-            Note updateNote = new Note(noteID, title,content, date, theme);
+            Note updateNote = new Note(noteID, title,content, date, theme, passwordNote);
             myRref.child(noteID).setValue(updateNote).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -231,7 +290,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         } else {
             String idNewNote = myRref.push().getKey();
             if (!title.isEmpty() && !content.isEmpty()) {
-                myRref.child(idNewNote).setValue(new Note(idNewNote, title, content, date, theme)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                myRref.child(idNewNote).setValue(new Note(idNewNote, title, content, date, theme, passwordNote)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {

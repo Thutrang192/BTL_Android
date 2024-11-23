@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LayoutCongViec"
+    android:background="@drawable/bg_congviec"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_note"
+        android:id="@+id/toolbar_todolist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -17,21 +18,63 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
 
-    <TextView
-        android:id="@+id/tvCongViec"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Công việc"
-        android:textColor="@color/black"
-        android:layout_marginLeft="40dp"
-        android:textSize="40sp"
-        tools:layout_editor_absoluteX="28dp"
-        tools:layout_editor_absoluteY="56dp" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Công việc"
+            android:textColor="@color/black"
+            android:layout_marginLeft="40dp"
+            android:textSize="40sp"
+            tools:layout_editor_absoluteX="28dp"
+            tools:layout_editor_absoluteY="56dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_filter"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_filter"
+            android:layout_gravity="center"
+            android:layout_marginRight="40dp"/>
+    </LinearLayout>
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="73dp"
         android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:clipToPadding="false" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="30dp"
+            android:backgroundTint="@color/primary"
+            android:clickable="true"
+            android:contentDescription="@string/mota"
+            android:outlineProvider="none"
+            android:src="@drawable/ic_add"
+            app:borderWidth="0dp"
+            app:maxImageSize="48dp" />
 
     </RelativeLayout>
 

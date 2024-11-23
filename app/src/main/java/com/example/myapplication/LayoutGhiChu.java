@@ -1,15 +1,21 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -162,7 +168,41 @@ public class LayoutGhiChu extends AppCompatActivity {
         noteAdapter = new NoteAdapter(lstNote, new iClickItemNote() {
             @Override
             public void onClickItemNote(Note note) {
-                chitietghichu(note);
+                if (note.getPassword() == null || note.getPassword().isEmpty()) {
+                    chitietghichu(note);
+                } else {
+                    Dialog dialog = new Dialog(LayoutGhiChu.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.layout_open_pass);
+
+                    Window window = dialog.getWindow();
+                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    Button btn_huy = dialog.findViewById(R.id.btn_huy);
+                    Button btn_ok = dialog.findViewById(R.id.btn_ok);
+                    EditText edtPass = dialog.findViewById(R.id.edt_passNote);
+
+                    btn_huy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btn_ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (edtPass.getText().toString().equals(note.getPassword())) {
+                                chitietghichu(note);
+                                dialog.dismiss();
+                            } else {
+                                Toast.makeText(LayoutGhiChu.this, "Mật khẩu không chính xác", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    dialog.show();
+                }
             }
 
             @Override

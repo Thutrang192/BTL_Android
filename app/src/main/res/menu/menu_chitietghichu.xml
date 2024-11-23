@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/ic_look"
+        android:id="@+id/ic_lock"
         android:icon="@drawable/ic_look"
-        android:title="look"
+        android:title="lock"
         app:showAsAction="always" />
     <item
         android:id="@+id/ic_share"

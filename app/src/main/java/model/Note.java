@@ -8,20 +8,29 @@ public class Note implements Serializable {
     private String content;
     private String date;
     private String theme;
-    private Boolean look;
+    private String password;
     private String idUser;
 
     public Note() {
     }
 
-    public Note(String id, String title, String content, String date, String theme, Boolean look, String idUser) {
+    public Note(String id, String title, String content, String date, String theme, String password, String idUser) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.date = date;
         this.theme = theme;
-        this.look = look;
+        this.password = password;
         this.idUser = idUser;
+    }
+
+    public Note(String id, String title, String content, String date, String theme, String password) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.theme = theme;
+        this.password = password;
     }
 
     public Note(String id, String title, String content, String date, String theme) {
@@ -32,14 +41,6 @@ public class Note implements Serializable {
         this.theme = theme;
     }
 
-    public Note(String id, String title, String content, String date, String theme, String idUser) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.date = date;
-        this.theme = theme;
-        this.idUser = idUser;
-    }
 
     public Note(String title, String content, String date) {
         this.title = title;
@@ -94,12 +95,12 @@ public class Note implements Serializable {
         this.theme = theme;
     }
 
-    public Boolean getLook() {
-        return look;
+    public String getPassword() {
+        return password;
     }
 
-    public void setLook(Boolean look) {
-        this.look = look;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getIdUser() {

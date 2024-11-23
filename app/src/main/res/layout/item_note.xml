@@ -35,7 +35,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_delete"
                 android:layout_weight="0"
-                android:layout_gravity="center"/>
+                android:layout_gravity="top"/>
 
         </LinearLayout>
 

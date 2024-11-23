@@ -102,7 +102,7 @@ public class LayoutDangNhap extends AppCompatActivity {
         tvDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(LayoutDangNhap.this, LayoutDangNhap.class);
+                Intent intent1 = new Intent(LayoutDangNhap.this, LayoutDangKy.class);
                 startActivity(intent1);
 
             }

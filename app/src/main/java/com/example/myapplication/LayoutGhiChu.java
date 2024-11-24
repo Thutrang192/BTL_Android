@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -70,6 +71,8 @@ public class LayoutGhiChu extends AppCompatActivity {
     private NoteAdapter noteAdapter;
     private FloatingActionButton btnAdd;
     private ArrayAdapter<String> arrayAdapter;
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,7 +160,17 @@ public class LayoutGhiChu extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        myRef = database.getReference("notes");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+        String userID = sharedPreferences.getString("userID", null);
+
+        if (userID != null) {
+            Log.d("DEBUG", "UserID: " + userID);
+            myRef = database.getReference(userID).child("notes");
+        } else {
+            Log.e("DEBUG", "UserID is null");
+        }
+        myRef = database.getReference(userID).child("notes");
 
         rvNotes = findViewById(R.id.rv_note);
 

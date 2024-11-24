@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -113,7 +114,10 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         // khoi tai Firestore
         firestore = FirebaseFirestore.getInstance();
         database = FirebaseDatabase.getInstance();
-        myRref = database.getReference("notes");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+        String userID = sharedPreferences.getString("userID", null);
+        myRref = database.getReference(userID).child("notes");
 
         lstNote = new ArrayList<>();
 

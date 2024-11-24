@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -131,6 +132,7 @@ public class LayoutDangNhap extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(LayoutDangNhap.this, "Dang nhap thanh cong", Toast.LENGTH_LONG).show();
                             Intent intent1 = new Intent(LayoutDangNhap.this, LayoutGhiChu.class);
+                            saveUserID();
                             startActivity(intent1);
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -140,6 +142,19 @@ public class LayoutDangNhap extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void saveUserID() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userID = user.getUid();
+
+            // luu userID vao SharePreferene
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("userID", userID);
+            editor.apply();
+        }
     }
 
     private boolean isValidEmail(String email) {

@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,7 +113,10 @@ public class LayoutCongViec extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        taskRef = database.getReference("tasks");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+        String userID = sharedPreferences.getString("userID", null);
+        taskRef = database.getReference(userID).child("tasks");
 
         calendarView = findViewById(R.id.calendarView);
         lstTask = new ArrayList<>();

@@ -63,7 +63,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.tvTitle.setText(title);
             holder.tvContent.setText(content);
             holder.tvDate.setText(date);
-            holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
+            //holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
+
+            if (theme != null && !theme.isEmpty()) {
+                try {
+                    holder.layout_item_note.setCardBackgroundColor(Color.parseColor(theme));
+                } catch (IllegalArgumentException e) {
+                    holder.layout_item_note.setCardBackgroundColor(Color.WHITE);
+                }
+            } else {
+                holder.layout_item_note.setCardBackgroundColor(Color.WHITE);
+            }
 
             holder.ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override

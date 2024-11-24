@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +60,7 @@ import model.NoteAdapter;
 
 public class LayoutGhiChu extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
@@ -152,6 +154,7 @@ public class LayoutGhiChu extends AppCompatActivity {
 
         bottomNav();
 
+        mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         firestore = FirebaseFirestore.getInstance();
         myRef = database.getReference("notes");
@@ -316,5 +319,18 @@ public class LayoutGhiChu extends AppCompatActivity {
         bundle.putSerializable("ItemNote", note);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.im_logout) {
+            mAuth.signOut();
+            Intent intent = new Intent(LayoutGhiChu.this, LayoutDangNhap.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

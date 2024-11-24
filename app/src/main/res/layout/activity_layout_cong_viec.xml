@@ -34,31 +34,26 @@
             tools:layout_editor_absoluteY="56dp"
             android:layout_weight="1"/>
 
-        <ImageView
-            android:id="@+id/iv_filter"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_filter"
-            android:layout_gravity="center"
-            android:layout_marginRight="40dp"/>
     </LinearLayout>
 
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="73dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_task"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:clipToPadding="false" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

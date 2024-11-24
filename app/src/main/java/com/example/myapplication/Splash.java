@@ -19,6 +19,15 @@ public class Splash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+
+        // Kiểm tra xem ứng dụng có được mở từ widget không
+        if (getIntent().hasExtra("open_layout_congviec")) {
+            Intent intent = new Intent(this, LayoutCongViec.class);
+            startActivity(intent);
+            finish(); // Đóng SplashActivity ngay sau khi chuyển
+            return;
+        }
+
         setContentView(R.layout.activity_splash);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -47,5 +56,7 @@ public class Splash extends AppCompatActivity {
            Intent intent = new Intent(this, LayoutGhiChu.class);
            startActivity(intent);
        }
+
+        finish();
     }
 }

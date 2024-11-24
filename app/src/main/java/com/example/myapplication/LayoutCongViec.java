@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,7 +123,7 @@ public class LayoutCongViec extends AppCompatActivity {
         taskAdapter = new TaskAdapter(lstTask, new iClickItemTask() {
             @Override
             public void onClickItemTask(Task task) {
-
+                openTaskDialog(task);
             }
 
             @Override
@@ -149,8 +152,6 @@ public class LayoutCongViec extends AppCompatActivity {
                 openTaskDialog();
             }
         });
-
-
     }
 
     private void getDate() {
@@ -165,11 +166,9 @@ public class LayoutCongViec extends AppCompatActivity {
         // lay ngay khi thay doi
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+            readTaskFromRealtime();
         });
     }
-
-
-
 
     private void openTaskDialog() {
         LayoutInflater inflater = getLayoutInflater();
@@ -220,7 +219,6 @@ public class LayoutCongViec extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
                 dialog.show();
             }
         });
@@ -234,12 +232,10 @@ public class LayoutCongViec extends AppCompatActivity {
                     return;
                 }
 
-                //Log.d("DEBUG", "hour: " + hour + " minute: " + minute);
-
-
                 // Tạo công việc mới
-                String taskId = UUID.randomUUID().toString();
+                String taskId = taskRef.push().getKey();
                 Task newTask = new Task(taskId, taskName, selectedDate, false, hour, minute);
+
                 // Thêm công việc vào danh sách và thông báo cho adapter
                 lstTask.add(newTask);
                 taskAdapter.notifyItemInserted(lstTask.size() - 1);  // Thông báo cho adapter rằng có phần tử mới ở cuối danh sách
@@ -249,34 +245,144 @@ public class LayoutCongViec extends AppCompatActivity {
 
                 // Đặt thông báo
                 //setNotification(newTask);
-                rvTask.scrollToPosition(lstTask.size() - 1);
+               // rvTask.scrollToPosition(lstTask.size() - 1);
                 // Đóng hộp thoại
                 dialog.dismiss();
             }
         });
-
         dialog.show();
-
     }
 
     private void readTaskFromRealtime() {
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(DataSnapshot snapshot) {
                 lstTask.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Task task = dataSnapshot.getValue(Task.class);
-                    lstTask.add(task);
+
+                for (DataSnapshot taskSnapshot : snapshot.getChildren()) {
+                    Task task = taskSnapshot.getValue(Task.class);
+                    if (task != null && task.getDate() != null && task.getDate().equals(selectedDate)) {
+                        lstTask.add(task); // Thêm công việc vào danh sách
+                    }
                 }
+
+                Collections.sort(lstTask, (task1, task2) -> Boolean.compare(task1.getCompleted(), task2.getCompleted()));
+
                 taskAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        readTaskFromRealtime();
+    }
+
+
+    private void openTaskDialog(Task task) {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_dialog_add_task, null);
+        EditText etTaskName = dialogView.findViewById(R.id.etTaskName);
+        TextView tvTime = dialogView.findViewById(R.id.tv_time);
+        Button btnHuy = dialogView.findViewById(R.id.btn_huy);
+        Button btnLuu = dialogView.findViewById(R.id.btn_luu);
+        ImageView ivRemind = dialogView.findViewById(R.id.iv_remind);
+
+        String idTask = task.getId();
+        String name = task.getName();
+        int hourTask = task.getHour();
+        int minuteTask = task.getMinute();
+
+        etTaskName.setText(name);
+        if (hourTask != -1 && minuteTask != -1) {
+            tvTime.setText(hourTask + ":" + minuteTask);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        btnHuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        ivRemind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.layout_dialog_time, null);
+                TimePicker timePicker = dialogView.findViewById(R.id.timePicker);
+                Button btnHuy = dialogView.findViewById(R.id.btn_huy);
+                Button btnLuu = dialogView.findViewById(R.id.btn_luu);
+
+                timePicker.setHour(hourTask);
+                timePicker.setMinute(minuteTask);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(LayoutCongViec.this);
+                builder.setView(dialogView);
+                AlertDialog dialog = builder.create();
+
+                btnHuy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnLuu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Lấy thời gian từ TimePicker
+                        hour = timePicker.getHour();
+                        minute = timePicker.getMinute();
+                        Log.d("DEBUG", "hour" + hour + "minute" + minute);
+                        if (hour != -1 && minute != -1) {
+                            tvTime.setText(hour + ":" + minute);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+        btnLuu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskName = etTaskName.getText().toString().trim();
+                if (taskName.isEmpty()) {
+                    Toast.makeText(LayoutCongViec.this, "Vui lòng nhập tên công việc", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //Log.d("DEBUG", "hour: " + hour + " minute: " + minute);
+
+                Task newTask = new Task(idTask, taskName, selectedDate, false, hour, minute);
+                // Thêm công việc vào danh sách và thông báo cho adapter
+                lstTask.add(newTask);
+                taskAdapter.notifyItemInserted(lstTask.size() - 1);  // Thông báo cho adapter rằng có phần tử mới ở cuối danh sách
+
+                // Lưu công việc vào Firebase
+                taskRef.child(idTask).setValue(newTask);
+
+                // Đặt thông báo
+                //setNotification(newTask);
+                //rvTask.scrollToPosition(lstTask.size() - 1);
+                // Đóng hộp thoại
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
 }
+
+
+

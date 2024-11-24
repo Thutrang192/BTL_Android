@@ -1,5 +1,6 @@
 package model;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import Interface.iClickItemTask;
@@ -58,16 +60,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.tvTaskTime.setText("");
         }
 
+        // Loại bỏ listener cũ để tránh callback không mong muốn
+        holder.checkBoxCompleted.setOnCheckedChangeListener(null);
+
         holder.checkBoxCompleted.setChecked(task.getCompleted());
 
-        // lang nghe su kien thay doi cua checkBox
+        // gach ngang chu khi hoan thanh
+        if (task.getCompleted()) {
+            holder.tvTaskName.setAlpha(0.5f);
+            holder.tvTaskName.setPaintFlags(holder.tvTaskName.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            holder.tvTaskName.setAlpha(1f);
+            holder.tvTaskName.setPaintFlags(holder.tvTaskName.getPaintFlags()&~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
         holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // cap nhat trang thai cua task
             task.setCompleted(isChecked);
 
-            // cap nhat trang thai tran firebase
+            // cap nhat trang thai tren firebase
             taskRef = FirebaseDatabase.getInstance().getReference("tasks");
             taskRef.child(task.getId()).child("completed").setValue(isChecked);
+
+            if (isChecked) {
+                moveTaskToEnd(position);
+            } else {
+                notifyItemChanged(position);
+            }
+
         });
 
         holder.ivDele.setOnClickListener(new View.OnClickListener() {
@@ -92,8 +111,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 }
             }
         });
+
+        holder.layout_item_task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iClickItemTask.onClickItemTask(task);
+            }
+        });
     }
 
+    private void moveTaskToEnd(int position) {
+        Task comletedTask = lstTask.get(position);
+        lstTask.remove(position); // xoa khoi vi tri cu
+        lstTask.add(comletedTask); // them vao cuoi danh sach
+        notifyItemMoved(position, lstTask.size() -1); // thong bao ve su thay doi vi tri
+    }
 
     @Override
     public int getItemCount() {

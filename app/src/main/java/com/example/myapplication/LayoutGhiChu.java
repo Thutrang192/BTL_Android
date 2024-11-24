@@ -314,7 +314,7 @@ public class LayoutGhiChu extends AppCompatActivity {
         Intent intent = new Intent(this, LayoutChiTietGhiChu.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("ItemNote", note);
-         intent.putExtras(bundle);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 }

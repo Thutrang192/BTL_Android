@@ -123,7 +123,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             tvTitle = itemView.findViewById(R.id.tv_title);
             tvDate = itemView.findViewById(R.id.tv_date);
             tvContent = itemView.findViewById(R.id.tv_content);

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +69,8 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
     private List<Note> lstNote;
 
     private String noteID;
-    private String passwordNote = null;
+    private String passwordNote = "";
+    private String newPass;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,10 +130,21 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle == null) {
             theme("#F2A7AD");
+            Log.d("Activity", "Khong co bundle");
             return false;
         }
 
-        Note note = (Note) bundle.get("NoteWidget");
+        Note note = (Note) bundle.get("itemNote");
+//        Note note = (Note) bundle.get("widget");
+//        if (note == null) {
+//            Log.d("Activity", "Khong nhan dc Note");
+//            return false;
+//        }
+
+        if (!note.getPassword().isEmpty()) {
+            passwordNote = note.getPassword().toString();
+        }
+
         noteID = note.getId().toString();
         edtTitle.setText(note.getTitle());
         edtContent.setText(note.getContent());
@@ -160,40 +174,40 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         }
 
         if (item.getItemId() == R.id.ic_lock) {
-            Dialog dialog = new Dialog(this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.layout_dialog_pass);
 
-            Window window = dialog.getWindow();
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.layout_dialog_pass);
 
-            Button btn_huy = dialog.findViewById(R.id.btn_huy);
-            Button btn_luu = dialog.findViewById(R.id.brn_luu);
-            EditText edtPass = dialog.findViewById(R.id.edt_passNote);
+                Window window = dialog.getWindow();
+                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            btn_huy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
+                Button btn_huy = dialog.findViewById(R.id.btn_huy);
+                Button btn_luu = dialog.findViewById(R.id.brn_luu);
+                EditText edtPass = dialog.findViewById(R.id.edt_passNote);
+
+                if (!passwordNote.isEmpty()) {
+                    edtPass.setText(passwordNote);
                 }
-            });
 
-            btn_luu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    passwordNote = edtPass.getText().toString();
-
-                    if (passwordNote.isEmpty()) {
-                        Toast.makeText(LayoutChiTietGhiChu.this, "Vui lòng nhập mật khẩu!", Toast.LENGTH_SHORT).show();
-                    } else {
+                btn_huy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         dialog.dismiss();
-                       // Toast.makeText(LayoutChiTietGhiChu.this, "Mật khẩu đã được lưu!", Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
+                });
 
-            dialog.show();
+                btn_luu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        newPass  = edtPass.getText().toString();
+                        Log.d("DEBUG", "Mật khẩu mới: " + passwordNote);
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
         }
 
         if (item.getItemId() == R.id.ic_share) {
@@ -204,7 +218,6 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                 Toast.makeText(LayoutChiTietGhiChu.this, "Ghi chú trống", Toast.LENGTH_LONG).show();
             }
         }
-
         if (item.getItemId() == R.id.ic_theme) {
             // tao bottomsheetdialog
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(LayoutChiTietGhiChu.this);
@@ -278,7 +291,14 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         ColorDrawable colorDrawable = (ColorDrawable) layout_ctghc.getBackground();
         String theme = String.format("#%06X", (0xFFFFFF & colorDrawable.getColor())); // Lấy mã màu HEX
 
+
+        Log.d("DEBUG", "Mật khẩu trước khi lưu: " + newPass);
+
+
         if (getDataFromItemNote()) {
+            if (newPass != null) {
+                passwordNote = newPass;
+            }
             Note updateNote = new Note(noteID, title,content, date, theme, passwordNote);
             myRref.child(noteID).setValue(updateNote).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

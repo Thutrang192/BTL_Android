@@ -184,7 +184,7 @@ public class LayoutGhiChu extends AppCompatActivity {
         noteAdapter = new NoteAdapter(lstNote, new iClickItemNote() {
             @Override
             public void onClickItemNote(Note note) {
-                if (note.getPassword() == null || note.getPassword().isEmpty()) {
+                if (note.getPassword() == null || note.getPassword().trim().isEmpty()) {
                     chitietghichu(note);
                 } else {
                     Dialog dialog = new Dialog(LayoutGhiChu.this);
@@ -222,8 +222,12 @@ public class LayoutGhiChu extends AppCompatActivity {
             }
 
             @Override
-            public void deleteData(String noteID) {
-                deleteDataFromRealtime(noteID);
+            public void deleteData(String noteID, Note note) {
+                if (note.getPassword() == null || note.getPassword().trim().isEmpty()) {
+                    deleteDataFromRealtime(noteID);
+                } else {
+                    Toast.makeText(LayoutGhiChu.this, "nhap mat khau", Toast.LENGTH_LONG).show();
+                }
             }
         });
         rvNotes.setAdapter(noteAdapter);
@@ -286,6 +290,7 @@ public class LayoutGhiChu extends AppCompatActivity {
     }
 
     public void deleteDataFromRealtime(String noteID) {
+
         myRef.child(noteID).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
@@ -327,10 +332,11 @@ public class LayoutGhiChu extends AppCompatActivity {
     }
 
     private void chitietghichu(Note note) {
-        Intent intent = new Intent(this, LayoutChiTietGhiChu.class);
+        Intent intent = new Intent(LayoutGhiChu.this, LayoutChiTietGhiChu.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("ItemNote", note);
+        bundle.putSerializable("itemNote", note);
         intent.putExtras(bundle);
+        intent.putExtra("source", "itemNote");
         startActivity(intent);
     }
 

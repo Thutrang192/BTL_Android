@@ -9,19 +9,8 @@ public class Note implements Serializable {
     private String date;
     private String theme;
     private String password;
-    private String idUser;
 
     public Note() {
-    }
-
-    public Note(String id, String title, String content, String date, String theme, String password, String idUser) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.date = date;
-        this.theme = theme;
-        this.password = password;
-        this.idUser = idUser;
     }
 
     public Note(String id, String title, String content, String date, String theme, String password) {
@@ -31,14 +20,6 @@ public class Note implements Serializable {
         this.date = date;
         this.theme = theme;
         this.password = password;
-    }
-
-    public Note(String id, String title, String content, String date, String theme) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.date = date;
-        this.theme = theme;
     }
 
 
@@ -103,11 +84,4 @@ public class Note implements Serializable {
         this.password = password;
     }
 
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
 }

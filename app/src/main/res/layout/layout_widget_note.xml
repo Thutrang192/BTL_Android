@@ -4,10 +4,23 @@
     android:layout_height="match_parent"
     android:theme="@style/Theme.MyApplication.AppWidgetContainer">
 
-    <ListView
-        android:id="@+id/lv_note_widget"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="2dp"/>
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/ic_addNote_widget"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_baseline_add_24"
+            android:layout_gravity="end"/>
+
+        <ListView
+            android:id="@+id/lv_note_widget"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="2dp"/>
+    </LinearLayout>
 
 </RelativeLayout>

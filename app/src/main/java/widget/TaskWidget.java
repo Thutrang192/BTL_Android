@@ -53,37 +53,7 @@ public class TaskWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-//        for (int appWidgetId : appWidgetIds) {
-//            Intent intent = new Intent(context, LayoutCongViec.class);
-//            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-//            intent.putExtra("open_layout_congviec", true);
-//
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-//
-//            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.layout_widget_task);
-//            views.setOnClickPendingIntent(R.id.tv_date, pendingIntent);
-//
-//            Intent intent1 = new Intent(context, WidgetService.class);
-//            views.setRemoteAdapter(R.id.layout_widget_task, intent1);
-//
-//            appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
         for (int appWidgetId : appWidgetIds) {
-            //updateWidget(context, appWidgetManager, appWidgetId);
-
-//            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.layout_widget_task);
-//
-//            // Gán Adapter để kết nối với RemoteViewsFactory
-//            Intent intent = new Intent(context, WidgetService.class);
-//            views.setRemoteAdapter(R.id.lv_task_widget, intent);
-//
-//            Intent intent1 = new Intent(context, LayoutCongViec.class);
-
-
 
             // Tạo PendingIntent để mở màn hình khi nhấn vào widget
             Intent intent = new Intent(context, LayoutCongViec.class);
@@ -95,7 +65,7 @@ public class TaskWidget extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE);
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.layout_widget_task);
-            views.setOnClickPendingIntent(R.id.tv_date, pendingIntent);
+            views.setOnClickPendingIntent(R.id.ic_add_widget, pendingIntent);
 
             // Đặt remote adapter cho widget
             Intent intent1 = new Intent(context, WidgetTaskService.class);

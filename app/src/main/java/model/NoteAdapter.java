@@ -89,7 +89,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                     String noteID = deletNote.getId();
 
                                     // xoa ghi chu tu firebase
-                                    iClickItemNote.deleteData(noteID);
+                                    iClickItemNote.deleteData(noteID, note);
 
                                     // xoa ghi chu ra khoi lstNote va originList
                                     lstNote.remove(currentPosition);

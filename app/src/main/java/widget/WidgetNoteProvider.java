@@ -1,11 +1,13 @@
 package widget;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -51,32 +53,15 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
         }
     }
 
+    private boolean notPass(Note note) {
+        return note.getPassword() == null || note.getPassword().trim().isEmpty();
+    }
+
     private void init() throws NullPointerException {
         try {
-            //notes.clear();
-
             if (userID != null) {
 
                 noteRef = FirebaseDatabase.getInstance().getReference().child(userID).child("notes");
-//            noteRef.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                        Note note = snapshot.getValue(Note.class);
-//                        lstNote.add(note);
-//                    }
-//
-//                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//                    ComponentName widget = new ComponentName(context, WidgetNoteProvider.class);
-//                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widget);
-//                    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.lv_note_widget);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                }
-//            });
 
                 noteRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -85,7 +70,7 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
                         if (snapshot.exists()) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 Note note = snapshot1.getValue(Note.class);
-                                if (note != null && !containsNoteWitdID(note.getId())) {
+                                if (note != null && notPass(note) && !containsNoteWitdID(note.getId())) {
                                     newNotes.add(note);
                                 }
                             }
@@ -110,19 +95,17 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         Note newNote = snapshot.getValue(Note.class);
-                        if (newNote != null && !containsNoteWitdID(newNote.getId())) {
+                        if (newNote != null && notPass(newNote) && !containsNoteWitdID(newNote.getId())) {
                             notes.add(newNote);
                             updateWidget();
-
                         }
-
 
                     }
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         Note updateNote = snapshot.getValue(Note.class);
-                        if (updateNote != null) {
+                        if (updateNote != null && notPass(updateNote)) {
                             for (int i = 0; i < notes.size(); i++) {
                                 if (notes.get(i).getId().equals(updateNote.getId())) {
                                     notes.set(i, updateNote);
@@ -163,19 +146,16 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName componentName = new ComponentName(context, NoteWidget.class);
-        appWidgetManager.notifyAppWidgetViewDataChanged(
-                appWidgetManager.getAppWidgetIds(componentName),
-                R.id.lv_note_widget
-        );
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(componentName), R.id.lv_note_widget);
     }
 
     private  boolean containsNoteWitdID(String noteId) {
         for (Note note : notes) {
             if (note.getId().equals(noteId)) {
-                return  true;
+                return true;
             }
         }
-        return  false;
+        return false;
     }
 
 
@@ -188,6 +168,7 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onDataSetChanged() {
         //init();
+        Log.d("WidgetNoteProvider", "onDataSetChanged called");
     }
 
     @Override
@@ -209,19 +190,27 @@ public class WidgetNoteProvider implements RemoteViewsService.RemoteViewsFactory
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_note_item);
 
         Note note = notes.get(position);
-        views.setTextViewText(R.id.tv_title_widget, note.getTitle());
-        views.setTextViewText(R.id.tv_content_widget, note.getContent());
-        views.setTextViewText(R.id.tv_date_widget, note.getDate());
 
+        if (notPass(note)) {
+            views.setTextViewText(R.id.tv_title_widget, note.getTitle());
+            views.setTextViewText(R.id.tv_content_widget, note.getContent());
+            views.setTextViewText(R.id.tv_date_widget, note.getDate());
+        }
         Intent intent1 = new Intent();
         Bundle bundle = new Bundle();
-        intent1.putExtra("notedID", notes.get(position).getId());
+        bundle.putSerializable("widget", note);
+        intent1.putExtras(bundle);
+        //intent1.putExtra("notedID", notes.get(position).getId());
+        intent1.putExtra("source", "widget");
+        Log.d("Widget", "Intent data: " + intent1.getExtras());
         views.setOnClickFillInIntent(R.id.widget_note_item, intent1);
 
-        // PendingIntent mở Activity chi tiết
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, notes.get(position).getId().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE);
-        views.setOnClickPendingIntent(R.id.widget_note_item, pendingIntent);
+        //PendingIntent mở Activity chi tiết
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context, notes.get(position).getId().hashCode(), intent, PendingIntent.FLAG_IMMUTABLE);
+//        views.setOnClickPendingIntent(R.id.widget_note_item, pendingIntent);
+
+        // Trong getViewAt
+        Log.d("Widget", "Note: " + note.getTitle() + ", ID: " + note.getId());
 
         return views;
     }

@@ -1,6 +1,10 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -267,6 +271,12 @@ public class LayoutCongViec extends AppCompatActivity {
                     Task task = taskSnapshot.getValue(Task.class);
                     if (task != null && task.getDate() != null && task.getDate().equals(selectedDate)) {
                         lstTask.add(task); // Thêm công việc vào danh sách
+
+                        // Kiểm tra và đặt thông báo chỉ khi có giờ và phút
+                        if (task.getHour() != -1 && task.getMinute() != -1) {
+                            handleTaskNotification(task);
+                        }
+
                     }
                 }
 
@@ -279,6 +289,61 @@ public class LayoutCongViec extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    private void handleTaskNotification(Task task) {
+        // Lấy thời gian hiện tại
+        Calendar calendarNow = Calendar.getInstance();
+        int currentHour = calendarNow.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendarNow.get(Calendar.MINUTE);
+        int currentDay = calendarNow.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendarNow.get(Calendar.MONTH) + 1; // Tháng bắt đầu từ 0
+        int currentYear = calendarNow.get(Calendar.YEAR);
+
+        // Lấy thời gian và ngày từ nhiệm vụ
+        int taskHour = task.getHour();
+        int taskMinute = task.getMinute();
+
+        // Tách ngày từ chuỗi ngày của nhiệm vụ
+        String[] dateParts = task.getDate().split("/");
+        int taskDay = Integer.parseInt(dateParts[0]);
+        int taskMonth = Integer.parseInt(dateParts[1]);
+        int taskYear = Integer.parseInt(dateParts[2]);
+
+        // So sánh ngày, tháng và năm
+        if (taskYear == currentYear && taskMonth == currentMonth && taskDay == currentDay) {
+            // Nếu ngày của nhiệm vụ là ngày hiện tại, kiểm tra thời gian
+            if (taskHour > currentHour || (taskHour == currentHour && taskMinute > currentMinute)) {
+                // Nếu thời gian nhiệm vụ lớn hơn thời gian hiện tại, thiết lập thông báo
+                setTaskNotification(task);
+            }
+        }
+    }
+    @SuppressLint("ScheduleExactAlarm")
+    private void setTaskNotification(Task task) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, task.getHour());
+        calendar.set(Calendar.MINUTE, task.getMinute());
+        calendar.set(Calendar.SECOND, 0);
+
+        // Chỉ thiết lập thông báo nếu thời gian chưa qua
+        if (calendar.getTimeInMillis() > System.currentTimeMillis()) {
+            Intent intent = new Intent(this, NotificationReceiver.class);
+            intent.putExtra("taskName", task.getName());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    task.getId().hashCode(), // Unique ID for each task
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null) {
+                alarmManager.cancel(pendingIntent); // Hủy thông báo cũ
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            }
+        }
     }
 
     @Override

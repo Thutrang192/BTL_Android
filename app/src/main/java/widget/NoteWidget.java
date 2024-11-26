@@ -5,11 +5,13 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.LayoutChiTietGhiChu;
+import com.example.myapplication.LayoutCongViec;
 import com.example.myapplication.LayoutGhiChu;
 import com.example.myapplication.R;
 
@@ -43,13 +45,20 @@ public class NoteWidget extends AppWidgetProvider {
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.layout_widget_note);
 
-            Intent intent = new Intent(context, WidgetNoteService.class);
-            views.setRemoteAdapter(R.id.lv_note_widget, intent);
 
-            // PendingIntent for item clicks
+            // Tạo PendingIntent để mở màn hình khi nhấn vào widget
+            Intent intent = new Intent(context, LayoutGhiChu.class);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+            views.setOnClickPendingIntent(R.id.ic_addNote_widget, pendingIntent);
+
+            // Liên kết Adapter của ListView trong Widget
+            Intent intent2 = new Intent(context, WidgetNoteService.class);
+            views.setRemoteAdapter(R.id.lv_note_widget, intent2);
+
+            //  PendingIntent để xử lý khi click vào item
             Intent clickIntent = new Intent(context, LayoutChiTietGhiChu.class);
-
-            PendingIntent clickPendingIntent = PendingIntent.getActivity(context, appWidgetId, clickIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent clickPendingIntent = PendingIntent.getActivity(context, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             views.setPendingIntentTemplate(R.id.lv_note_widget, clickPendingIntent);
 
             // Update widget

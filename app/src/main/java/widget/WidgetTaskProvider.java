@@ -21,8 +21,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import model.Task;
 
@@ -73,6 +78,7 @@ public class WidgetTaskProvider implements RemoteViewsService.RemoteViewsFactory
                         if (!isDataLoaded) {
                             taskList.clear();
                             taskList.addAll(newTaskList);
+                            sortTaskListByDate();
                             Log.d("TaskList", "Task list changed. Updated size: " + taskList.size());
                             isDataLoaded= true;
                             updateWidget();
@@ -93,9 +99,11 @@ public class WidgetTaskProvider implements RemoteViewsService.RemoteViewsFactory
                         Task newTask = snapshot.getValue(Task.class);
                         if(newTask != null && !containsTaskWithId(newTask.getId())){
                             taskList.add(newTask);
-                        }
 
+                        }
+                        sortTaskListByDate();
                         updateWidget();
+
                     }
 
                     @Override
@@ -105,6 +113,7 @@ public class WidgetTaskProvider implements RemoteViewsService.RemoteViewsFactory
                             for(int i=0;i<taskList.size();i++){
                                 if(taskList.get(i).getId().equals(updateTask.getId())){
                                     taskList.set(i, updateTask);
+                                    sortTaskListByDate();
                                     updateWidget();
                                     break;
                                 }
@@ -117,6 +126,7 @@ public class WidgetTaskProvider implements RemoteViewsService.RemoteViewsFactory
                         Task removeTask= snapshot.getValue(Task.class);
                         if(removeTask != null){
                             taskList.removeIf(task -> task.getId().equals(removeTask.getId()));  // Xóa ghi chú
+                            sortTaskListByDate();
                             updateWidget();  // Cập nhật widget
                         }
                     }
@@ -184,42 +194,54 @@ public class WidgetTaskProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public RemoteViews getViewAt(int position) {
 
-//        // Kiểm tra danh sách trước khi truy cập
-//        if (taskList == null || taskList.isEmpty()) {
-//            Log.e("TashList", "Danh sach trong!");
-//            return null;
-//        }
-//
-//        // tao item hien thi trong widget
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_task_item);
-//
-//        Task task = taskList.get(position);
-//        views.setTextViewText(R.id.tv_TaskName_widget, task.getName());
-//
-//        if (task.getHour() != -1 && task.getMinute() != -1) {
-//            String time = String.format("%02d:%02d", task.getHour(), task.getMinute());
-//            views.setTextViewText(R.id.tv_TaskTime_widget, time);
-//        } else {
-//            views.setTextViewText(R.id.tv_TaskTime_widget, "");
-//        }
-
-
         if (position >= taskList.size() || taskList.get(position) == null) {
-            return null; // Trả về null nếu dữ liệu không hợp lệ
+            return null;
         }
 
         Task task = taskList.get(position);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_task_item);
+
         views.setTextViewText(R.id.tv_TaskName_widget, task.getName());
+        views.setTextViewText(R.id.tv_TaskDate_widget, task.getDate());
+
         if(task.getHour() != -1 && task.getMinute() != -1){
             views.setTextViewText(R.id.tv_TaskTime_widget, task.getHour() + ":" + task.getMinute());
         }
         else{
             views.setTextViewText(R.id.tv_TaskTime_widget, "");
         }
-
         return views;
 
+    }
+
+    private void sortTaskListByDate() {
+        Log.d("TaskList", "Sorting task list by date...");
+
+        // Định dạng ngày như lưu trữ trong Firebase
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        try {
+            // Sắp xếp danh sách theo ngày
+            Collections.sort(taskList, (t1, t2) -> {
+                try {
+                    // Kiểm tra nếu `date` bị null
+                    if (t1.getDate() == null) return 1; // T1 bị null, đẩy xuống cuối
+                    if (t2.getDate() == null) return -1; // T2 bị null, đẩy xuống cuối
+
+                    // Chuyển chuỗi `date` thành đối tượng `Date` để so sánh
+                    Date date1 = dateFormat.parse(t1.getDate());
+                    Date date2 = dateFormat.parse(t2.getDate());
+                    return date2.compareTo(date1);
+                } catch (ParseException e) {
+                    Log.e("TaskList", "Error parsing date: " + e.getMessage());
+                    return 0; // Không thay đổi thứ tự nếu lỗi
+                }
+            });
+
+            Log.d("TaskList", "Task list sorted successfully.");
+        } catch (Exception e) {
+            Log.e("TaskList", "Error while sorting task list: " + e.getMessage());
+        }
     }
 
     @Override

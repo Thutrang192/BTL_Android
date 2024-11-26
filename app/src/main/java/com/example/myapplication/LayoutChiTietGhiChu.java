@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -34,6 +35,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
@@ -62,6 +65,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
     private TextView tvDate;
     private LinearLayout layout_ctghc;
 
+    private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private DatabaseReference myRref;
     private FirebaseDatabase database;
@@ -115,6 +119,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         getDataFromItemNote();
 
         // khoi tai Firestore
+        auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         database = FirebaseDatabase.getInstance();
 
@@ -268,6 +273,68 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                 }
             });
 
+        }
+
+
+        int id = item.getItemId();
+
+        if (id == R.id.im_logout) {
+            // Xóa thông tin userID khỏi SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("userID");
+            editor.apply();
+
+            auth.signOut();
+
+            Intent intent = new Intent(LayoutChiTietGhiChu.this, LayoutDangNhap.class);
+            startActivity(intent);
+        }
+
+        if (id == R.id.im_deleteAccount) {
+            String userID = auth.getCurrentUser().getUid();
+
+            if (userID != null) {
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(userID);
+
+                Dialog dialog = new Dialog(LayoutChiTietGhiChu.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.layout_dialog_delete_account);
+
+                Window window = dialog.getWindow();
+                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button btn_huy = dialog.findViewById(R.id.btn_huy_delete_account);
+                Button btn_ok = dialog.findViewById(R.id.btn_ok_delete_account);
+
+                btn_huy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btn_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        userRef.removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                if (error == null) {
+                                    Toast.makeText(LayoutChiTietGhiChu.this, "Xóa tài khoản thành công", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(LayoutChiTietGhiChu.this, LayoutDangNhap.class);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                } else {
+                                    Log.d("DEBUG", "Xóa tài khoản thất bại", error.toException());
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

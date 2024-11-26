@@ -1,11 +1,9 @@
 package model;
 
-import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,19 +19,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import Interface.iClickItemTask;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> lstTask;
+    private List<Task> originTask;
     private iClickItemTask iClickItemTask;
     private DatabaseReference taskRef;
 
     // Constructor to initialize the task list
     public TaskAdapter(List<Task> taskList, String userID, iClickItemTask listener) {
         this.lstTask = taskList;
+        this.originTask = taskList;
         this.iClickItemTask = listener;
         this.taskRef = FirebaseDatabase.getInstance().getReference(userID).child("tasks");
     }
@@ -49,12 +48,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = lstTask.get(position);
-
-        // Set task name, date, and time
-        holder.tvTaskName.setText(task.getName());
         Context context = holder.itemView.getContext();
-
-
+        holder.tvTaskName.setText(task.getName());
 
         if (task.getHour() != -1 && task.getMinute() != -1) {
             holder.tvTaskTime.setText(String.format("%02d:%02d", task.getHour(), task.getMinute()));
@@ -97,9 +92,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (currentPosition != RecyclerView.NO_POSITION) {
                     new AlertDialog.Builder(context)
                             .setTitle("Xóa công việc")
-                            .setMessage("Bạn có chắc chắn muốn xóa ghi chú này?")
+                            .setMessage("Bạn có chắc chắn muốn xóa công việc này?")
                             .setPositiveButton("Xóa", ((dialog, which) -> {
-                                Task deleTask = lstTask.get(currentPosition);
+//                                Task deleTask = lstTask.get(currentPosition);
+//                                String taskID = deleTask.getId();
 
                                 iClickItemTask.deleteData(task.getId());
                                 lstTask.remove(currentPosition);
@@ -150,4 +146,45 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         }
     }
+
+    public void filter(String query) {
+        if (query.isEmpty()) {
+            // hien thi toan bo danh sach neu khong co tu khoa
+            lstTask = originTask;
+        } else {
+            List<Task> lstSearch = new ArrayList<>();
+            for (Task task : originTask) {
+                if (task.getName().toLowerCase().contains(query.toLowerCase())) {
+                    lstSearch.add(task);
+                }
+            }
+            lstTask = lstSearch;
+        }
+
+        // cap nhat giao dien
+        notifyDataSetChanged();
+    }
+
+    public void filterByDate(String date) {
+        List<Task> filteredList = new ArrayList<>();
+
+        // Lọc nhiệm vụ theo ngày
+        for (Task task : originTask) {
+            if (task.getDate().equals(date)) { // So sánh ngày dưới dạng String
+                filteredList.add(task);
+            }
+        }
+
+        // Cập nhật danh sách hiển thị
+        lstTask = filteredList;
+        notifyDataSetChanged();
+    }
+
+
+    public void updateListSearch(ArrayList<Task> tasks) {
+        this.originTask = tasks;
+    }
+
+
+
 }

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="0dp"
-    android:layout_margin="20dp">
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    android:background="@drawable/custom_dialog_pass">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +19,7 @@
             android:textColor="@color/black"
             android:text="Đặt thời gian nhắc nhở"
             android:gravity="center"
-            android:paddingTop="10dp"/>
+            android:paddingTop="20dp"/>
 
         <TimePicker
             android:id="@+id/timePicker"
@@ -32,22 +31,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:paddingBottom="25dp">
 
         <Button
             android:id="@+id/btn_huy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hủy"
-            android:layout_marginRight="20dp"/>
+            android:textSize="18sp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/custom_btn_huy"/>
 
         <Button
             android:id="@+id/btn_luu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:text="Lưu" />
+            android:layout_marginLeft="30dp"
+            android:textSize="18sp"
+            android:text="Lưu"
+            android:background="@drawable/custom_btn_luu"/>
         </LinearLayout>
     </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+</LinearLayout>

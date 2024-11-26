@@ -6,6 +6,8 @@
     android:resizeMode="vertical|horizontal"
     android:initialLayout="@layout/layout_widget_task"
     android:widgetCategory="home_screen"
-    android:previewImage="@drawable/logo">
+    android:previewImage="@drawable/bg_widget_task"
+    android:targetCellWidth="3"
+    android:targetCellHeight="2">
 
 </appwidget-provider>

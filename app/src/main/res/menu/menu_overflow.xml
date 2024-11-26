@@ -36,4 +36,10 @@
         android:icon="@drawable/ic_logout"
         android:title="Đăng xuất"
         />
+
+    <item
+        android:id="@+id/im_deleteAccount"
+        android:icon="@drawable/ic_delete"
+        android:title="Xóa tài khoản"
+        />
 </menu>

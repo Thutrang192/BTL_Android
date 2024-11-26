@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -59,26 +60,68 @@ public class LayoutCongViec extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference taskRef;
 
-    private CalendarView calendarView;
-    private RecyclerView rvTask;
     private List<Task> lstTask;
     private TaskAdapter taskAdapter;
-    private FloatingActionButton btn_add;
     private String selectedDate;
     private int hour = -1;
     private int minute = -1;
 
+
+    private RecyclerView rvTask;
+    private FloatingActionButton btn_add;
+    private BottomNavigationView bottomNavigationView;
+    private CalendarView calendarView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_overflow, menu);
         inflater.inflate(R.menu.menu_congviec, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Search");
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                taskAdapter.filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                taskAdapter.filter(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    searchView.clearFocus();
+                    searchView.setIconified(true);
+
+                    // hien thi lai danh sach origin
+                    taskAdapter.filter("");
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                    calendarView.setVisibility(View.VISIBLE);
+                } else {
+                    bottomNavigationView.setVisibility(View.GONE);
+                    calendarView.setVisibility(View.GONE);
+                }
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
+
     }
 
     private void bottomNav() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
+        bottomNavigationView = findViewById(R.id.bottomNav);
         bottomNavigationView.setSelectedItemId(R.id.im_todo);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -175,7 +218,18 @@ public class LayoutCongViec extends AppCompatActivity {
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
             readTaskFromRealtime();
+            Log.d("calendar", selectedDate);
         });
+
+//        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+//            // Chuyển đổi ngày thành chuỗi "yyyy-MM-dd"
+//            String selectedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+//
+//            // Gọi hàm lọc nhiệm vụ
+//            taskAdapter.filterByDate(selectedDate);
+//            taskAdapter.notifyDataSetChanged();
+//        });
+
     }
 
     private void openTaskDialog() {
@@ -185,6 +239,7 @@ public class LayoutCongViec extends AppCompatActivity {
         Button btnHuy = dialogView.findViewById(R.id.btn_huy);
         Button btnLuu = dialogView.findViewById(R.id.btn_luu);
         ImageView ivRemind = dialogView.findViewById(R.id.iv_remind);
+        TextView tvTime = dialogView.findViewById(R.id.tv_time);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
@@ -224,6 +279,9 @@ public class LayoutCongViec extends AppCompatActivity {
                         hour = timePicker.getHour();
                         minute = timePicker.getMinute();
                         Log.d("DEBUG", "hour" + hour + "minute" + minute);
+                        if (hour != -1 && minute != -1) {
+                            tvTime.setText(hour + ":" + minute);
+                        }
                         dialog.dismiss();
                     }
                 });
@@ -251,10 +309,6 @@ public class LayoutCongViec extends AppCompatActivity {
                 // Lưu công việc vào Firebase
                 taskRef.child(taskId).setValue(newTask);
 
-                // Đặt thông báo
-                //setNotification(newTask);
-               // rvTask.scrollToPosition(lstTask.size() - 1);
-                // Đóng hộp thoại
                 dialog.dismiss();
             }
         });
@@ -271,12 +325,11 @@ public class LayoutCongViec extends AppCompatActivity {
                     Task task = taskSnapshot.getValue(Task.class);
                     if (task != null && task.getDate() != null && task.getDate().equals(selectedDate)) {
                         lstTask.add(task); // Thêm công việc vào danh sách
-
+                        Log.d("task", task.getName());
                         // Kiểm tra và đặt thông báo chỉ khi có giờ và phút
                         if (task.getHour() != -1 && task.getMinute() != -1) {
                             handleTaskNotification(task);
                         }
-
                     }
                 }
 
@@ -416,6 +469,8 @@ public class LayoutCongViec extends AppCompatActivity {
                         if (hour != -1 && minute != -1) {
                             tvTime.setText(hour + ":" + minute);
                         }
+
+
                         dialog.dismiss();
                     }
                 });
@@ -450,6 +505,11 @@ public class LayoutCongViec extends AppCompatActivity {
         });
         dialog.show();
     }
+
+
+
+
+
 
 }
 

@@ -72,6 +72,8 @@ public class LayoutGhiChu extends AppCompatActivity {
     private FloatingActionButton btnAdd;
     private ArrayAdapter<String> arrayAdapter;
 
+    private BottomNavigationView bottomNavigationView;
+
 
 
     @Override
@@ -109,8 +111,10 @@ public class LayoutGhiChu extends AppCompatActivity {
 
                     // hien thi lai danh sach origin
                     noteAdapter.filter("");
-                } else {
 
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                } else {
+                    bottomNavigationView.setVisibility(View.GONE);
                 }
             }
         });
@@ -119,7 +123,7 @@ public class LayoutGhiChu extends AppCompatActivity {
     }
 
     private void bottomNav() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNav);
+        bottomNavigationView = findViewById(R.id.bottomNav);
         bottomNavigationView.setSelectedItemId(R.id.im_note);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -344,12 +348,67 @@ public class LayoutGhiChu extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
+
         if (id == R.id.im_logout) {
+            // Xóa thông tin userID khỏi SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppGhiChu", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("userID");
+            editor.apply();
+
             mAuth.signOut();
+
             Intent intent = new Intent(LayoutGhiChu.this, LayoutDangNhap.class);
             startActivity(intent);
         }
 
+        if (id == R.id.im_deleteAccount) {
+            String userID = mAuth.getCurrentUser().getUid();
+
+            if (userID != null) {
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(userID);
+
+                Dialog dialog = new Dialog(LayoutGhiChu.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.layout_dialog_delete_account);
+
+                Window window = dialog.getWindow();
+                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button btn_huy = dialog.findViewById(R.id.btn_huy_delete_account);
+                Button btn_ok = dialog.findViewById(R.id.btn_ok_delete_account);
+
+                btn_huy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btn_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        userRef.removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                if (error == null) {
+                                    Toast.makeText(LayoutGhiChu.this, "Xóa tài khoản thành công", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(LayoutGhiChu.this, LayoutDangNhap.class);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                } else {
+                                    Log.d("DEBUG", "Xóa tài khoản thất bại", error.toException());
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

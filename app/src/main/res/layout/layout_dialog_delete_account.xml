@@ -10,29 +10,32 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Đặt mật khẩu"
-        android:textSize="30sp"
+        android:text="Bạn có chắc chắn xóa tài khoản này không?"
+        android:textSize="25sp"
         android:gravity="center"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:paddingTop="10dp"/>
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
 
-    <EditText
-        android:id="@+id/edt_passNote"
-        android:layout_gravity="center"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"/>
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/warning"
+        android:text="Thao tác này sẽ xóa tất cả dữ liệu, hãy cẩn thận!"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:paddingBottom="10dp"
         android:gravity="center">
 
         <Button
-            android:id="@+id/btn_huy"
+            android:id="@+id/btn_huy_delete_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hủy"
@@ -41,10 +44,10 @@
             android:background="@drawable/custom_btn_huy"/>
 
         <Button
-            android:id="@+id/brn_luu"
+            android:id="@+id/btn_ok_delete_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lưu"
+            android:text="Xác nhận"
             android:textSize="20sp"
             android:layout_marginLeft="30dp"
             android:paddingLeft="10dp"

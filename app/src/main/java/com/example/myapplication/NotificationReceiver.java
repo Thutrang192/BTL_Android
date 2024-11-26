@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -33,7 +34,7 @@ public class NotificationReceiver  extends BroadcastReceiver {
                 context,
                 0,
                 openActivityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE // Thêm FLAG_IMMUTABLE nếu bạn đang sử dụng Android 12 trở lên
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE // Thêm FLAG_IMMUTABLE nếu đang sử dụng Android 12 trở lên
         );
 
         // Tạo thông báo
@@ -50,6 +51,7 @@ public class NotificationReceiver  extends BroadcastReceiver {
 
         // Kiểm tra quyền
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("DEBUG", "Chua cap quyen");
             return; // Thoát nếu quyền chưa được cấp
         }
 

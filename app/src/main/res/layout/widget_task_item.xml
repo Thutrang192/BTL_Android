@@ -14,7 +14,7 @@
             android:layout_marginRight="10dp"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
             android:background="@drawable/widget_bg_checkbox" />
 
         <LinearLayout
@@ -37,7 +37,7 @@
                 android:id="@+id/tv_TaskTime_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task Time" />
+                android:text="21:56" />
         </LinearLayout>
 
     </LinearLayout>

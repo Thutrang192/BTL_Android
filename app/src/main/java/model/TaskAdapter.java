@@ -1,5 +1,6 @@
 package model;
 
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +32,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private DatabaseReference taskRef;
 
     // Constructor to initialize the task list
-    public TaskAdapter(List<Task> taskList, iClickItemTask listener) {
+    public TaskAdapter(List<Task> taskList, String userID, iClickItemTask listener) {
         this.lstTask = taskList;
         this.iClickItemTask = listener;
+        this.taskRef = FirebaseDatabase.getInstance().getReference(userID).child("tasks");
     }
 
     @NonNull
@@ -78,7 +80,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             task.setCompleted(isChecked);
 
             // cap nhat trang thai tren firebase
-            taskRef = FirebaseDatabase.getInstance().getReference("tasks");
             taskRef.child(task.getId()).child("completed").setValue(isChecked);
 
             if (isChecked) {

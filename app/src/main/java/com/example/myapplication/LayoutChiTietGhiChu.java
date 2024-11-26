@@ -130,7 +130,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
             return false;
         }
 
-        Note note = (Note) bundle.get("ItemNote");
+        Note note = (Note) bundle.get("NoteWidget");
         noteID = note.getId().toString();
         edtTitle.setText(note.getTitle());
         edtContent.setText(note.getContent());

@@ -124,7 +124,7 @@ public class LayoutCongViec extends AppCompatActivity {
         rvTask = findViewById(R.id.rv_task);
         rvTask.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        taskAdapter = new TaskAdapter(lstTask, new iClickItemTask() {
+        taskAdapter = new TaskAdapter(lstTask, userID, new iClickItemTask() {
             @Override
             public void onClickItemTask(Task task) {
                 openTaskDialog(task);

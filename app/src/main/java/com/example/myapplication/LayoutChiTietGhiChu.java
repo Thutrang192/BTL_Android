@@ -74,7 +74,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
 
     private String noteID;
     private String passwordNote = "";
-    private String newPass;
+    private String newPass="";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,7 +196,10 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                     edtPass.setText(passwordNote);
                 }
 
-                btn_huy.setOnClickListener(new View.OnClickListener() {
+            Log.d("DEBUG", "passwordNote: " + passwordNote);
+
+
+            btn_huy.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
@@ -207,7 +210,7 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         newPass  = edtPass.getText().toString();
-                        Log.d("DEBUG", "Mật khẩu mới: " + passwordNote);
+                        Log.d("DEBUG", "Mật khẩu mới: " + newPass);
                         dialog.dismiss();
                     }
                 });
@@ -231,12 +234,6 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
             bottomSheetDialog.setContentView(bottomsheet_choose_color);
 
             bottomSheetDialog.show();
-
-            ImageView iv_red = findViewById(R.id.iv_red);
-            ImageView iv_orange = findViewById(R.id.iv_orange);
-            ImageView iv_blue = findViewById(R.id.iv_blue);
-            ImageView iv_green = findViewById(R.id.iv_green);
-            ImageView iv_violet = findViewById(R.id.iv_violet);
 
             bottomsheet_choose_color.findViewById(R.id.iv_red).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -358,14 +355,21 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
         ColorDrawable colorDrawable = (ColorDrawable) layout_ctghc.getBackground();
         String theme = String.format("#%06X", (0xFFFFFF & colorDrawable.getColor())); // Lấy mã màu HEX
 
+        Log.d("DEBUG", theme);
+
 
         Log.d("DEBUG", "Mật khẩu trước khi lưu: " + newPass);
 
 
         if (getDataFromItemNote()) {
-            if (newPass != null) {
+            if (!newPass.isEmpty()) {
                 passwordNote = newPass;
+            } else {
+                passwordNote = "";
             }
+            Log.d("DEBUG", "passwordNote: " + passwordNote);
+            Log.d("DEBUG", "newPass 2: " + newPass);
+
             Note updateNote = new Note(noteID, title,content, date, theme, passwordNote);
             myRref.child(noteID).setValue(updateNote).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -379,8 +383,17 @@ public class LayoutChiTietGhiChu extends AppCompatActivity {
             });
 
         } else {
+            if (newPass != null || !newPass.isEmpty()) {
+                passwordNote = newPass;
+            } else {
+                passwordNote = "";
+            }
+            Log.d("DEBUG", "passwordNote: " + passwordNote);
+            Log.d("DEBUG", "newPass: " + newPass);
+
             String idNewNote = myRref.push().getKey();
             if (!title.isEmpty() && !content.isEmpty()) {
+                Log.d("DEBUG", "Mật khẩu duoc lưu: " + passwordNote);
                 myRref.child(idNewNote).setValue(new Note(idNewNote, title, content, date, theme, passwordNote)).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
